@@ -2,8 +2,8 @@ package core;
 
 public class DoublyLinkedLst<T> {
 
-    public Node<T> head;
-    public Node<T> tail;
+    private Node<T> head;
+    private Node<T> tail;
 
     public DoublyLinkedLst(){
         head = null;
@@ -92,5 +92,9 @@ public class DoublyLinkedLst<T> {
         return head==null;
     }
 
+    public T getHead(){
+        if (head == null) return null;
+        return head.data;
+    }
 
 }
