@@ -1,14 +1,14 @@
 package core;
 
-public class DLLStack<T> {
+public class DLLQueue<T> {
 
     private DoublyLinkedLst<T> ll = new DoublyLinkedLst<>();
 
-    public void push(T item){
-        ll.addItemToHead(item);
+    public void enqueue(T item){
+        ll.addItemToTail(item);
     }
 
-    public T pop(){
+    public T dequeue(){
         return ll.getAndRemoveItemFromHead();
     }
 

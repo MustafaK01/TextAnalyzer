@@ -1,10 +1,10 @@
 package core;
 
 public class Node<T> {
-    public T data;
-    public Node<T> next;
-    public Node<T> prev;
-    public Node(T data){
+    protected T data;
+    protected Node<T> next;
+    protected Node<T> prev;
+    protected Node(T data){
         this.data = data;
         this.next = null;
         this.prev = null;
