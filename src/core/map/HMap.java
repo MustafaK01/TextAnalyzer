@@ -72,8 +72,9 @@ public class HMap<K,V> {
         llMapBuckets = newBuckets;
     }
 
-
-
+    public V getVal(K key){
+        return null;
+    }
 
 
 }
