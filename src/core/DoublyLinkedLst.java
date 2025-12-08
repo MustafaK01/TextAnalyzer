@@ -97,4 +97,9 @@ public class DoublyLinkedLst<T> {
         return head.data;
     }
 
+    public Node<T> getHeadNode(){
+        if (head == null) return null;
+        return head;
+    }
+
 }

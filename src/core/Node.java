@@ -9,4 +9,16 @@ public class Node<T> {
         this.next = null;
         this.prev = null;
     }
+
+    public T getData() {
+        return data;
+    }
+
+    public Node<T> getNext() {
+        return next;
+    }
+
+    public Node<T> getPrev() {
+        return prev;
+    }
 }
