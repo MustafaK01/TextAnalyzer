@@ -73,6 +73,19 @@ public class HMap<K,V> {
     }
 
     public V getVal(K key){
+        if(key==null) return null;
+        int h = key.hashCode() & 0x7fffffff;
+        int i = h % capacity;
+        DoublyLinkedLst<MapEntry<K, V>> bucket = llMapBuckets[i];
+        if (bucket == null) return null;
+        Node<MapEntry<K, V>> curr = bucket.getHeadNode();
+        while (curr != null) {
+            MapEntry<K, V> entry = curr.getData();
+            if (entry.hash == h && entry.key.equals(key)) {
+                return entry.value;
+            }
+            curr = curr.getNext();
+        }
         return null;
     }
 
