@@ -1,9 +1,10 @@
 package ui;
 
-import core.map.HMap;
 import service.TextAnalysisService;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 
 public class Window extends JFrame{
@@ -33,7 +34,15 @@ public class Window extends JFrame{
         centerGrid.setBackground(Theme.BG_COLOR);
         inputPanel = new TextSectionPanel("Input", true);
         outputPanel = new TextSectionPanel("Output", false);
-        inputPanel.setText("Paste text to analyze here...\nJava is cool.");
+        inputPanel.setText("Paste text to analyze here...\n" +
+                "Java is cool.Paste text to analyze here...\n" +
+                "Java is cool.Paste text to analyze here...\n" +
+                "Java is cool.Paste text to analyze here...\n" +
+                "Java is cool.Paste text to analyze here...\n" +
+                "Java is cool.Paste text to analyze here...\n" +
+                "Java is cool.Paste text to analyze here...\n" +
+                "Java is cool.Paste text to analyze here...\n" +
+                "Java is cool.");
         centerGrid.add(inputPanel);
         centerGrid.add(outputPanel);
         mainContainer.add(centerGrid, BorderLayout.CENTER);
@@ -45,15 +54,18 @@ public class Window extends JFrame{
     }
 
     private void setupListeners() {
-        controlPanel.addAnalyzeListener(e -> {
-            String op = controlPanel.getSelectedOperation();
-            String content = inputPanel.getText();
-            String searchWord = controlPanel.getSearchWord();
-            outputPanel.setText(content);
-            if ("Word Frequency".equals(op)) {
-                Integer count = countOccurrences(content, searchWord);
-                controlPanel.updateResultLabel("Count: " + count);
-                outputPanel.highlightText(searchWord);
+        controlPanel.addSearchInputListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                countOccurrences();
+            }
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                countOccurrences();
+            }
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                countOccurrences();
             }
         });
 
@@ -65,8 +77,17 @@ public class Window extends JFrame{
         });
     }
 
-    private Integer countOccurrences(String content, String word) {
-        return textAnalysisService.wordFrequency(content,word);
+    private void countOccurrences() {
+        String op = controlPanel.getSelectedOperation();
+        String content = inputPanel.getText();
+        String searchInput = controlPanel.getSearchWord();
+        if (content.isEmpty()) return;
+        outputPanel.setText(content);
+        if ("Word Frequency".equals(op)) {
+            Integer count = textAnalysisService.wordFrequency(content,searchInput);
+            controlPanel.updateResultLabel("Count: " + count);
+            outputPanel.highlightText(searchInput);
+        }
     }
 
     public static void main(String[] args) {

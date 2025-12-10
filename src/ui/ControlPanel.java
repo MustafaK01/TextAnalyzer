@@ -1,6 +1,7 @@
 package ui;
 
 import javax.swing.*;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionListener;
 
@@ -9,7 +10,6 @@ public class ControlPanel extends JPanel {
     private JTextField searchField;
     private JLabel frequencyLabel;
     private JPanel dynamicInputPanel;
-    private JButton analyzeBtn;
     private JButton clearBtn;
 
     public ControlPanel() {
@@ -33,7 +33,6 @@ public class ControlPanel extends JPanel {
         frequencyLabel.setForeground(Theme.HIGHLIGHT_COLOR);
         frequencyLabel.setFont(new Font("Arial", Font.BOLD, 14));
 
-        analyzeBtn = Theme.createButton("ANALYZE", Theme.ACCENT_COLOR);
         clearBtn = Theme.createButton("CLEAR", Color.GRAY);
     }
 
@@ -51,7 +50,6 @@ public class ControlPanel extends JPanel {
 
         add(operationSelector);
         add(dynamicInputPanel);
-        add(analyzeBtn);
         add(clearBtn);
     }
 
@@ -74,7 +72,7 @@ public class ControlPanel extends JPanel {
     }
 
     public String getSearchWord() {
-        return searchField.getText().trim();
+        return searchField.getText();
     }
 
     public void updateResultLabel(String text) {
@@ -86,11 +84,11 @@ public class ControlPanel extends JPanel {
         frequencyLabel.setText("");
     }
 
-    public void addAnalyzeListener(ActionListener listener) {
-        analyzeBtn.addActionListener(listener);
-    }
-
     public void addClearListener(ActionListener listener) {
         clearBtn.addActionListener(listener);
+    }
+
+    public void addSearchInputListener(DocumentListener listener) {
+        searchField.getDocument().addDocumentListener(listener);
     }
 }

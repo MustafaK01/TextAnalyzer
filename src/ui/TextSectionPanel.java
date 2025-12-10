@@ -43,8 +43,7 @@ public class TextSectionPanel extends JPanel {
         if (word == null || word.isEmpty()) return;
 
         Highlighter highlighter = textArea.getHighlighter();
-        Highlighter.HighlightPainter painter =
-                new DefaultHighlighter.DefaultHighlightPainter(Theme.HIGHLIGHT_COLOR);
+        Highlighter.HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Theme.HIGHLIGHT_COLOR);
 
         String content = textArea.getText();
         String lowerContent = content.toLowerCase();
