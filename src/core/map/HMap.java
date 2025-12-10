@@ -43,7 +43,7 @@ public class HMap<K,V> {
             }
             curr = curr.getNext();
         }
-        llMapBuckets[i].addItemToTail(new MapEntry<>(key,value,h));
+        llMapBuckets[i].addNodeToTail(new MapEntry<>(key,value,h));
         size++;
         if(size>= capacity * loadFactor){
             this.rehash();
@@ -65,7 +65,7 @@ public class HMap<K,V> {
                 if(newBuckets[newIndex] == null){
                     newBuckets[newIndex] = new DoublyLinkedLst<>();
                 }
-                newBuckets[newIndex].addItemToTail(entry);
+                newBuckets[newIndex].addNodeToTail(entry);
                 curr = curr.getNext();
             }
         }
@@ -88,6 +88,24 @@ public class HMap<K,V> {
         }
         return null;
     }
+
+    public void remove(K key){
+        if(key==null) return;
+        int h = key.hashCode() & 0x7fffffff;
+        int i = h % capacity;
+        DoublyLinkedLst<MapEntry<K, V>> bucket = llMapBuckets[i];
+        if (bucket == null) return;
+        Node<MapEntry<K, V>> curr = bucket.getHeadNode();
+        while(curr!=null){
+            MapEntry<K, V> entry = curr.getData();
+            if(entry.key.equals(key)){
+                bucket.removeNode(curr);
+                return;
+            }
+            curr = curr.getNext();
+        }
+    }
+
 
 
 }

@@ -10,7 +10,7 @@ public class DoublyLinkedLst<T> {
         tail = null;
     }
 
-    public void addItemToHead(T item){
+    public void addNodeToHead(T item){
         Node<T> node = new Node<>(item);
         if(this.head != null) {
             node.next = head;
@@ -23,7 +23,7 @@ public class DoublyLinkedLst<T> {
         }
     }
 
-    public void addItemToTail(T item){
+    public void addNodeToTail(T item){
         Node<T> node = new Node<>(item);
         if(this.head != null) {
             tail.next = node;
@@ -35,13 +35,13 @@ public class DoublyLinkedLst<T> {
         tail = node;
     }
 
-    public void addItemsAsArray(T[] items){
+    public void addNodesAsArray(T[] items){
         for (int i = 0; i < items.length; i++) {
-            addItemToTail(items[i]);
+            addNodeToTail(items[i]);
         }
     }
 
-    public void printAllItems(){
+    public void printAllNodes(){
         Node<T> curr = head;
         while(curr!=null){
             System.out.println(curr.data);
@@ -49,7 +49,7 @@ public class DoublyLinkedLst<T> {
         }
     }
 
-    public void printItemWithIndex(int index){
+    public void printNodeWithIndex(int index){
         Node<T> curr = head;
         int i = 0;
         while(curr!=null){
@@ -62,7 +62,7 @@ public class DoublyLinkedLst<T> {
         }
     }
 
-    public T getAndRemoveItemFromHead(){
+    public T getAndRemoveNodeFromHead(){
         if(this.isEmpty()) return null;
         T temp = head.data;
         if(head.next != null){
@@ -75,7 +75,7 @@ public class DoublyLinkedLst<T> {
         return temp;
     }
 
-    public T getAndRemoveItemFromTail(){
+    public T getAndRemoveNodeFromTail(){
         if(this.isEmpty()) return null;
         T temp = tail.data;
         if(tail.prev != null){
@@ -100,6 +100,34 @@ public class DoublyLinkedLst<T> {
     public Node<T> getHeadNode(){
         if (head == null) return null;
         return head;
+    }
+
+    public void removeNode(Node<T> curr){
+        Node<T> left = curr.prev;
+        Node<T> right = curr.next;
+        if (curr == head && curr == tail){
+            head = null;
+            tail = null;
+            return;
+        }
+        if(curr == head){
+            head = right;
+            head.prev = null;
+            return;
+        }
+        if(curr == tail){
+            tail = left;
+            head.next = null;
+            return;
+        }
+        if(left!=null){
+            left.next = right;
+            curr.next = null;
+        }
+        if(right!=null){
+            right.prev = left;
+            curr.prev = null;
+        }
     }
 
 }

@@ -2,7 +2,7 @@ package core.map;
 
 public class MapEntry<K,V> {
 
-    K key;
+    final K key;
     V value;
     int hash;
 
