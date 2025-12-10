@@ -135,7 +135,7 @@ public class DoublyLinkedLst<T> {
         StringBuilder sb = new StringBuilder();
         Node current = head;
         while (current != null) {
-            sb.append(current.toString()).append(" ");
+            sb.append(current.toString()).append("\n");
             current = current.next;
         }
         return sb.toString();
