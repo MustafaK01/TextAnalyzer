@@ -5,11 +5,11 @@ public class DLLQueue<T> {
     private DoublyLinkedLst<T> ll = new DoublyLinkedLst<>();
 
     public void enqueue(T item){
-        ll.addItemToTail(item);
+        ll.addNodeToTail(item);
     }
 
     public T dequeue(){
-        return ll.getAndRemoveItemFromHead();
+        return ll.getAndRemoveNodeFromHead();
     }
 
     public T peek(){
