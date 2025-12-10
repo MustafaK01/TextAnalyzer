@@ -1,6 +1,7 @@
 package ui;
 
 import javax.swing.*;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
@@ -59,6 +60,14 @@ public class TextSectionPanel extends JPanel {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void addDocumentListener(DocumentListener listener) {
+        textArea.getDocument().addDocumentListener(listener);
+    }
+
+    public JTextArea getTextArea() {
+        return this.textArea;
     }
 
 }

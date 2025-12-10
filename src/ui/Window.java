@@ -1,11 +1,14 @@
 package ui;
 
 import service.TextAnalysisService;
+import service.TextOperationsService;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class Window extends JFrame{
 
@@ -13,6 +16,8 @@ public class Window extends JFrame{
     private TextSectionPanel outputPanel;
     private ControlPanel controlPanel;
     private TextAnalysisService textAnalysisService;
+    private TextOperationsService textOperationsService;
+
 
     public Window() {
         setTitle("Text Analyzer");
@@ -48,6 +53,7 @@ public class Window extends JFrame{
         mainContainer.add(centerGrid, BorderLayout.CENTER);
         controlPanel = new ControlPanel();
         textAnalysisService = new TextAnalysisService();
+        textOperationsService = new TextOperationsService();
         setupListeners();
         mainContainer.add(controlPanel, BorderLayout.SOUTH);
         add(mainContainer);
@@ -69,7 +75,43 @@ public class Window extends JFrame{
             }
         });
 
-        // Clear
+        inputPanel.getTextArea().getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+
+            }
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+
+            }
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+
+            }
+        });
+
+        inputPanel.getTextArea().addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+                    textOperationsService.saveState(inputPanel.getText());
+                }
+                else if (e.getKeyCode() == KeyEvent.VK_Z && e.isControlDown()) {
+                    String oldText = textOperationsService.undo(inputPanel.getText());
+                    if (oldText != null) {
+                        inputPanel.setText(oldText);
+                    }
+                    e.consume();
+                }
+                else if (e.getKeyCode() == KeyEvent.VK_Y && e.isControlDown()) {
+                    String newText = textOperationsService.redo(inputPanel.getText());
+                    if (newText != null) {
+                        inputPanel.setText(newText);
+                    }
+                    e.consume();
+                }
+            }
+        });
         controlPanel.addClearListener(e -> {
             inputPanel.clear();
             outputPanel.clear();
