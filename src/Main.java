@@ -1,6 +1,6 @@
-import core.DLLStack;
 import core.DoublyLinkedLst;
 import core.map.HMap;
+import core.map.MapEntry;
 
 public class Main {
 
@@ -8,8 +8,9 @@ public class Main {
     public static void main(String[] args) {
         DoublyLinkedLst<String> doublyLinkedLst = new DoublyLinkedLst<>();
         for (int i = 0; i < 123; i++) {
-            doublyLinkedLst.addItemToTail("asd"+i);
+            doublyLinkedLst.addNodeToTail("asd"+i);
         }
+//        doublyLinkedLst.removeItemFromIndex(2);
 //        doublyLinkedLst.printAllItems();
 //        System.out.println("\n\n\n");
 //        while(!doublyLinkedLst.isEmpty()){
@@ -28,11 +29,18 @@ public class Main {
 //            System.out.println(dllStack.peek());
 //            dllStack.pop();
 //        }
-        HMap<String ,Integer> map = new HMap<>();
-        map.put("asdasd",1);
-        map.put("asdasd",5);
-        map.put("b",1);
-        System.out.println(map.getVal("asdasd"));
+//        HMap<String ,String> map = new HMap<>();
+//        map.put("key","val");
+//        map.remove("key");
+//        System.out.println(map.getVal("key"));
+
+        HMap<String,String> map = new HMap<>();
+        map.put("key","val");
+//        map.put("key","another");
+//        map.remove("key");
+
+        System.out.println(map.getVal("key"));
+
 
     }
 
