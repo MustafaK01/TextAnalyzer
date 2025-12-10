@@ -6,7 +6,7 @@ public class TextAnalysisService {
 
 
     // Metni tararken aranan kelimeyi her bulduğunda aynı kelimeyi tekrar
-    // aramamak için her döngüde başlangıç noktasını kelimenin bittiği yere kaydırır
+    // aramamak için her döngüde başlangıç noktasını önceden bulduğu kelimenin bittiği yere kaydırır
     public Integer wordFrequency(String mainText, String searchedWord){
         if (searchedWord == null || searchedWord.isEmpty()) return 0;
         String content = mainText.toLowerCase();
