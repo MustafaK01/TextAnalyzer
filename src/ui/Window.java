@@ -1,5 +1,6 @@
 package ui;
 
+import core.map.HMap;
 import service.TextAnalysisService;
 import service.TextOperationsService;
 
@@ -63,7 +64,7 @@ public class Window extends JFrame{
         controlPanel.addSearchInputListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
-                countOccurrences();
+                routeAction();
             }
             @Override
             public void removeUpdate(DocumentEvent e) {
@@ -71,8 +72,16 @@ public class Window extends JFrame{
             }
             @Override
             public void changedUpdate(DocumentEvent e) {
-                countOccurrences();
+                routeAction();
             }
+        });
+
+        controlPanel.addOperationListener(e -> {
+            routeAction();
+        });
+
+        controlPanel.addWindowSizeListener(e -> {
+            routeAction();
         });
 
         inputPanel.getTextArea().getDocument().addDocumentListener(new DocumentListener() {
@@ -119,6 +128,14 @@ public class Window extends JFrame{
         });
     }
 
+    private void routeAction() {
+        String op = controlPanel.getSelectedOperation();
+
+        if ("Word Frequency".equals(op)) countOccurrences();
+        else if ("Context Analysis".equals(op)) analyzeContextWindow();
+
+    }
+
     private void countOccurrences() {
         String op = controlPanel.getSelectedOperation();
         String content = inputPanel.getText();
@@ -129,6 +146,23 @@ public class Window extends JFrame{
             Integer count = textAnalysisService.wordFrequency(content,searchInput);
             controlPanel.updateResultLabel("Count: " + count);
             outputPanel.highlightText(searchInput);
+        }
+    }
+
+    private void analyzeContextWindow() {
+        String content = inputPanel.getText();
+        String searchInput = controlPanel.getSearchWord();
+        int windowSize = controlPanel.getWindowSize();
+
+        if (content.isEmpty() || searchInput.isEmpty()){
+            outputPanel.clear();
+            return;
+        }
+        HMap<String, Integer> result = textAnalysisService.frequencyWindow(content,searchInput,windowSize);
+        if (result != null) {
+            outputPanel.setText(result.toString());
+        } else {
+            outputPanel.setText("Sonuç bulunamadı.");
         }
     }
 
