@@ -106,6 +106,18 @@ public class HMap<K,V> {
         }
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        if (llMapBuckets == null) return "";
+        for (int i = 0; i < llMapBuckets.length; i++) {
+            if (llMapBuckets[i] != null) {
+                sb.append(llMapBuckets[i].toString());
+                sb.append("\n");
+            }
+        }
+        return sb.toString();
+    }
 
 
 }

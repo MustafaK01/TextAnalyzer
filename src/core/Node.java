@@ -21,4 +21,11 @@ public class Node<T> {
     public Node<T> getPrev() {
         return prev;
     }
+
+    @Override
+    public String toString() {
+        if (data == null) return "null";
+
+        return data.toString();
+    }
 }

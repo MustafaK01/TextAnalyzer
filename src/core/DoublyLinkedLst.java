@@ -130,4 +130,15 @@ public class DoublyLinkedLst<T> {
         }
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        Node current = head;
+        while (current != null) {
+            sb.append(current.toString()).append(" ");
+            current = current.next;
+        }
+        return sb.toString();
+    }
+
 }

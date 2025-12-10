@@ -11,5 +11,10 @@ public class MapEntry<K,V> {
         this.value = value;
         this.hash = hash;
     }
+
+    @Override
+    public String toString() {
+        return key + " : " + value;
+    }
 }
 
