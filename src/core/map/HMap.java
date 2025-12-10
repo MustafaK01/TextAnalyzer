@@ -54,7 +54,6 @@ public class HMap<K,V> {
     private void rehash() {
         DoublyLinkedLst<MapEntry<K,V>>[] oldBuckets = llMapBuckets;
         capacity = capacity * 2;
-        size = 0;
         DoublyLinkedLst<MapEntry<K,V>>[] newBuckets = (DoublyLinkedLst<MapEntry<K,V>>[]) new DoublyLinkedLst[capacity];
         for (DoublyLinkedLst<MapEntry<K, V>> bucket : oldBuckets){
             if (bucket == null) continue;
@@ -100,6 +99,7 @@ public class HMap<K,V> {
             MapEntry<K, V> entry = curr.getData();
             if(entry.key.equals(key)){
                 bucket.removeNode(curr);
+                size--;
                 return;
             }
             curr = curr.getNext();
