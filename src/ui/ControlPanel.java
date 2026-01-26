@@ -13,11 +13,18 @@ public class ControlPanel extends JPanel {
     private JComboBox<String> operationSelector;
     private JTextField searchField;
     private JLabel frequencyLabel;
-    private JSpinner windowSizeSpinner;
-    private JLabel windowLabel;
 
     private JPanel dynamicInputPanel;
     private JButton clearBtn;
+
+    private JSpinner contextWindowSpinner;
+    private JSpinner entropyWindowSpinner;
+    private JLabel contextWindowLabel;
+    private JLabel entropyWindowLabel;
+    private SpinnerNumberModel contextWindowModel;
+    private SpinnerNumberModel entropyWindowModel;
+
+    private JLabel searchLabel;
 
     public ControlPanel() {
         setLayout(new FlowLayout(FlowLayout.CENTER, 15, 10));
@@ -29,7 +36,7 @@ public class ControlPanel extends JPanel {
     }
 
     private void initComponents() {
-        String[] options = {"Select Operation...", "Word Frequency", "Context Analysis"};
+        String[] options = {"Select Operation...", "Word Frequency", "Context Analysis","Entropy (Global)","Entropy (Sliding Profile)"};
         operationSelector = new JComboBox<>(options);
         operationSelector.setFont(Theme.FONT_NORMAL);
 
@@ -39,14 +46,20 @@ public class ControlPanel extends JPanel {
         frequencyLabel = new JLabel("");
         frequencyLabel.setForeground(Theme.HIGHLIGHT_COLOR);
         frequencyLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        windowSizeSpinner = new JSpinner(new SpinnerNumberModel(2, 1, 10, 1));
-        windowSizeSpinner.setFont(Theme.FONT_NORMAL);
-        JComponent editor = windowSizeSpinner.getEditor();
-        JFormattedTextField tf = ((JSpinner.DefaultEditor) editor).getTextField();
-        tf.setColumns(2);
-
-        windowLabel = new JLabel("Window:");
-        windowLabel.setForeground(Color.LIGHT_GRAY);
+        contextWindowModel = new SpinnerNumberModel(2, 1, 10, 1);
+        entropyWindowModel = new SpinnerNumberModel(200, 20, 5000, 10);
+        contextWindowSpinner = new JSpinner(contextWindowModel);
+        entropyWindowSpinner = new JSpinner(entropyWindowModel);
+        contextWindowSpinner.setFont(Theme.FONT_NORMAL);
+        entropyWindowSpinner.setFont(Theme.FONT_NORMAL);
+        contextWindowLabel = new JLabel("Context Window:");
+        contextWindowLabel.setForeground(Color.LIGHT_GRAY);
+        entropyWindowLabel = new JLabel("Entropy Window:");
+        entropyWindowLabel.setForeground(Color.LIGHT_GRAY);
+        ((JSpinner.DefaultEditor) contextWindowSpinner.getEditor()).getTextField().setColumns(2);
+        ((JSpinner.DefaultEditor) entropyWindowSpinner.getEditor()).getTextField().setColumns(4);
+        searchLabel = new JLabel("Target Word:");
+        searchLabel.setForeground(Color.LIGHT_GRAY);
 
         clearBtn = Theme.createButton("CLEAR", Color.GRAY);
     }
@@ -56,13 +69,20 @@ public class ControlPanel extends JPanel {
         dynamicInputPanel.setBackground(Theme.BG_COLOR);
         dynamicInputPanel.setVisible(false);
 
-        JLabel searchLabel = new JLabel("Target Word:");
-        searchLabel.setForeground(Color.LIGHT_GRAY);
+        searchLabel.setVisible(false);
+        searchField.setVisible(false);
+        contextWindowLabel.setVisible(false);
+        contextWindowSpinner.setVisible(false);
+        entropyWindowLabel.setVisible(false);
+        entropyWindowSpinner.setVisible(false);
+        frequencyLabel.setVisible(false);
 
         dynamicInputPanel.add(searchLabel);
         dynamicInputPanel.add(searchField);
-        dynamicInputPanel.add(windowLabel);
-        dynamicInputPanel.add(windowSizeSpinner);
+        dynamicInputPanel.add(contextWindowLabel);
+        dynamicInputPanel.add(contextWindowSpinner);
+        dynamicInputPanel.add(entropyWindowLabel);
+        dynamicInputPanel.add(entropyWindowSpinner);
         dynamicInputPanel.add(frequencyLabel);
 
         add(operationSelector);
@@ -75,14 +95,21 @@ public class ControlPanel extends JPanel {
             String selected = (String) operationSelector.getSelectedItem();
             boolean isFreq = "Word Frequency".equals(selected);
             boolean isContext = "Context Analysis".equals(selected);
-            boolean showSearchPanel = isFreq || isContext;
-            dynamicInputPanel.setVisible(showSearchPanel);
+            boolean isEntropyGlobal = "Entropy (Global)".equals(selected);
+            boolean isEntropySliding = "Entropy (Sliding Profile)".equals(selected);
+            boolean showPanel = isFreq || isContext || isEntropyGlobal || isEntropySliding;
+            dynamicInputPanel.setVisible(showPanel);
 
-            if(showSearchPanel) {
-                windowLabel.setVisible(isContext);
-                windowSizeSpinner.setVisible(isContext);
-                frequencyLabel.setVisible(isFreq);
-                searchField.setText("");
+            if(showPanel) {
+                searchLabel.setVisible(isFreq || isContext);
+                searchField.setVisible(isFreq || isContext);
+                contextWindowLabel.setVisible(isContext);
+                contextWindowSpinner.setVisible(isContext);
+                entropyWindowLabel.setVisible(isEntropySliding);
+                entropyWindowSpinner.setVisible(isEntropySliding);
+                frequencyLabel.setVisible(isFreq || isEntropyGlobal);
+
+                if (isFreq || isContext) searchField.setText("");
                 frequencyLabel.setText("");
             }
             revalidate();
@@ -98,8 +125,12 @@ public class ControlPanel extends JPanel {
         return searchField.getText();
     }
 
-    public int getWindowSize() {
-        return (Integer) windowSizeSpinner.getValue();
+    public int getContextWindowSize() {
+        return (Integer) contextWindowSpinner.getValue();
+    }
+
+    public int getEntropyWindowSize() {
+        return (Integer) entropyWindowSpinner.getValue();
     }
 
     public void updateResultLabel(String text) {
@@ -109,8 +140,9 @@ public class ControlPanel extends JPanel {
     public void clearInputs() {
         searchField.setText("");
         frequencyLabel.setText("");
-        windowSizeSpinner.setValue(2);
         operationSelector.setSelectedIndex(0);
+        // contextWindowSpinner.setValue(2);
+        // entropyWindowSpinner.setValue(200);
     }
 
     public void addClearListener(ActionListener listener) {
@@ -121,8 +153,12 @@ public class ControlPanel extends JPanel {
         operationSelector.addActionListener(listener);
     }
 
-    public void addWindowSizeListener(ChangeListener listener) {
-        windowSizeSpinner.addChangeListener(listener);
+    public void addContextWindowSizeListener(ChangeListener listener) {
+        contextWindowSpinner.addChangeListener(listener);
+    }
+
+    public void addEntropyWindowSizeListener(ChangeListener listener) {
+        entropyWindowSpinner.addChangeListener(listener);
     }
 
     public void addSearchInputListener(DocumentListener listener) {

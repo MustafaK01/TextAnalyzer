@@ -1,6 +1,8 @@
 package ui;
 
 import core.map.HMap;
+import core.profiling.EntropyAnalyzer;
+import core.profiling.EntropyVisualizer;
 import service.TextAnalysisService;
 import service.TextOperationsService;
 
@@ -18,11 +20,12 @@ public class Window extends JFrame{
     private ControlPanel controlPanel;
     private TextAnalysisService textAnalysisService;
     private TextOperationsService textOperationsService;
-
+    private EntropyAnalyzer entropyAnalyzer;
+    private EntropyVisualizer entropyVisualizer;
 
     public Window() {
         setTitle("Text Analyzer");
-        setSize(900, 600);
+        setSize(1920, 1079);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         initUI();
@@ -55,6 +58,8 @@ public class Window extends JFrame{
         controlPanel = new ControlPanel();
         textAnalysisService = new TextAnalysisService();
         textOperationsService = new TextOperationsService();
+        entropyAnalyzer = new EntropyAnalyzer();
+        entropyVisualizer = new EntropyVisualizer();
         setupListeners();
         mainContainer.add(controlPanel, BorderLayout.SOUTH);
         add(mainContainer);
@@ -80,22 +85,30 @@ public class Window extends JFrame{
             routeAction();
         });
 
-        controlPanel.addWindowSizeListener(e -> {
-            routeAction();
+        controlPanel.addContextWindowSizeListener(e -> {
+            if ("Context Analysis".equals(controlPanel.getSelectedOperation())) {
+                routeAction();
+            }
+        });
+
+        controlPanel.addEntropyWindowSizeListener(e -> {
+            if ("Entropy (Sliding Profile)".equals(controlPanel.getSelectedOperation())) {
+                routeAction();
+            }
         });
 
         inputPanel.getTextArea().getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
-
+                routeAction();
             }
             @Override
             public void removeUpdate(DocumentEvent e) {
-
+                routeAction();
             }
             @Override
             public void changedUpdate(DocumentEvent e) {
-
+                routeAction();
             }
         });
 
@@ -132,7 +145,9 @@ public class Window extends JFrame{
         String op = controlPanel.getSelectedOperation();
 
         if ("Word Frequency".equals(op)) countOccurrences();
-        else if ("Context Analysis".equals(op)) analyzeContextWindow();
+        else if ("Context Analysis".equals(op)) getContextWindowSize();
+        else if ("Entropy (Global)".equals(op)) showGlobalEntropy();
+        else if ("Entropy (Sliding Profile)".equals(op)) getEntropyWindowSize();
 
     }
 
@@ -149,10 +164,10 @@ public class Window extends JFrame{
         }
     }
 
-    private void analyzeContextWindow() {
+    private void getContextWindowSize(){
         String content = inputPanel.getText();
         String searchInput = controlPanel.getSearchWord();
-        int windowSize = controlPanel.getWindowSize();
+        int windowSize = controlPanel.getContextWindowSize();
 
         if (content.isEmpty() || searchInput.isEmpty()){
             outputPanel.clear();
@@ -165,6 +180,42 @@ public class Window extends JFrame{
             outputPanel.setText("Sonuç bulunamadı.");
         }
     }
+
+    private void showGlobalEntropy() {
+        String content = inputPanel.getText();
+        if (content == null || content.isEmpty()) return;
+
+        double h = entropyAnalyzer.globalEntropy(content);
+
+        controlPanel.updateResultLabel(String.format("H: %.3f bits/char", h));
+        outputPanel.setText(
+                "Global Character Shannon Entropy\n" +
+                        "-------------------------------\n" +
+                        String.format("H = %.6f bits/char\n", h)
+        );
+    }
+
+    private void getEntropyWindowSize() {
+        String content = inputPanel.getText();
+        if (content == null || content.isEmpty()) return;
+
+        int windowSize = controlPanel.getEntropyWindowSize();
+        int step = Math.max(1, windowSize / 10);
+        var profile = entropyAnalyzer.slidingEntropy(content, windowSize, step);
+
+        double global = entropyAnalyzer.globalEntropy(content);
+        double threshold = Math.min(7.5, global + 1.0);
+
+        String bars = entropyVisualizer.asciiBars(profile, 50, threshold, windowSize, step);
+
+        core.profiling.EntropyHeatmap heatmap = new core.profiling.EntropyHeatmap();
+        var segs = heatmap.buildSegments(profile, windowSize, step, threshold);
+        String heat = heatmap.formatHeatmap(segs, windowSize, step, threshold);
+        controlPanel.updateResultLabel(String.format("Global: %.3f  Thr: %.3f", global, threshold));
+        outputPanel.setText(bars + "\n\n" + heat);
+        System.out.println("entropy windowSize from UI = " + controlPanel.getEntropyWindowSize());
+    }
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new Window().setVisible(true));
