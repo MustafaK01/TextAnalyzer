@@ -16,5 +16,14 @@ public class MapEntry<K,V> {
     public String toString() {
         return key + " : " + value;
     }
+
+    public V getValue() {
+        return value;
+    }
+
+    public K getKey() {
+        return key;
+    }
+
 }
 

@@ -117,7 +117,7 @@ public class DoublyLinkedLst<T> {
         }
         if(curr == tail){
             tail = left;
-            head.next = null;
+            tail.next = null;
             return;
         }
         if(left!=null){

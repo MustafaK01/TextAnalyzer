@@ -119,5 +119,9 @@ public class HMap<K,V> {
         return sb.toString();
     }
 
+    public DoublyLinkedLst<MapEntry<K,V>>[] buckets(){
+        return llMapBuckets;
+    }
+
 
 }
